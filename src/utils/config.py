@@ -1,5 +1,6 @@
 import time
 import sys
+
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
 def config():
