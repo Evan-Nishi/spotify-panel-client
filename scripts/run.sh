@@ -1,0 +1,1 @@
+sudo python3 src/main.py --led-gpio-mapping=adafruit-hat-pwm --led-cols=64 --led-rows=32
