@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #this is meant for raspbery pi os lite
-#this must be run in the root directory of the project
 
 #literally a copy of: https://github.com/riffnshred/nhl-led-scoreboard/blob/master/scripts/install.sh
 

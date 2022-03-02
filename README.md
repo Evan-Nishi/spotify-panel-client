@@ -1,2 +1,2 @@
 # WIP
-Run scritps/setup.sh to install packages.
+Run scripts/setup.sh to install packages.

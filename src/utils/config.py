@@ -1,7 +1,4 @@
-import time
-import sys
-
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
+from rgbmatrix import RGBMatrixOptions
 
 def config():
     options = RGBMatrixOptions()
