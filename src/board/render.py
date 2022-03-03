@@ -1,3 +1,3 @@
-def render(title, artist, progress, file_name):
+def render(title, artists, progress, file_name, full_render = True):
     print('TEMP FILLER')
     return 0
