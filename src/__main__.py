@@ -1,14 +1,13 @@
 import sys
-import api.auth as auth
-import api.dao as dao
+import threading #yk this is gonna be bad
 import os
 import time
 
 import utils.image_helper as img_h
-
-import board.render
-#from rgbmatrix import RGBMatrix, RGBMatrixOptions
-#from utils.config import config
+import utils.config as config
+import board.renderState as r
+import api.auth as auth
+import api.dao as dao
 from dotenv import load_dotenv, find_dotenv
 
 
@@ -20,33 +19,29 @@ def run():
 
     #buffer delay between cycles in seconds, for rate limit purposes have it greater than 0.3s
     BUFFER = float(os.environ.get('CYCLE_BUFFER'))
-
     #board timeout in cycles(roughly 0.1s + delay buffer), set to -1 for no timeout, must be whole number
     TIMEOUT = int(os.environ.get('TIMEOUT'))
-
     #inactive timeout in cycles(roughly 0.1s + delay buffer), set to -1 for no inactive timeout, must be whole number
     INACTIVE_TIMEOUT = int(os.environ.get('INACTIVE_TIMEOUT'))
-
-    iter = 0
-    inactive_count = 0
 
     TOKEN = os.environ.get('REF_TOKEN')
     SECRET = os.environ.get('CLIENT_SECRET')
     ID = os.environ.get('CLIENT_ID')
 
-    #used to check if entire board needs to be rerendered or just part
-    prev_id = 0
+    iter = 0
+    inactive_count = 0
+    update = False
 
-    #matrix = RGBMatrix(options = config)
     access_token = auth.get_access_token(TOKEN, ID, SECRET)
    
     #time until token expires w 10 sec buffer
     #TODO get expire time from api instead of hard coded val even though it is constant
     expire = time.time() + 3590
 
+    board_state = r.RenderState()
+
     #should probably make ErrorHandler class but I lazy
-    while (TIMEOUT - iter != 0 or INACTIVE_TIMEOUT - inactive_count != 0):
-        
+    while (TIMEOUT - iter != 0 and INACTIVE_TIMEOUT - inactive_count != 0):
         req = dao.curr_track(access_token)
 
         #CHECKS FOR THE SAME THING TWICE IDIOT
@@ -73,26 +68,28 @@ def run():
         if(req != 204):
             inactive_count = 0
             album_id = curr_track['item']['album']['id']
+
             #gets smallest resolution image and fetches it
             img_h.fetch_img(album_id + '.jpg', curr_track['item']['album']['images'][-1]['url'])
             f_name = img_h.resize(album_id + '.jpg')
 
             artist_string = ''
-            #just in case of multiple authors
+
+            #if multiple authors, get all and comma seperate
             for a in curr_track['item']['album']['artists']:
                 artist_string += a['name'] + ', '
             artist_string = artist_string[0:-2]
-            board.render(
+            '''
+            board.render.render(
                 artists = artist_string,
                 title = curr_track['item']['name'],
                 progress = curr_track['progress_ms']/curr_track['item']['duration_ms'],
                 file_name = f_name,
-                full_render = (curr_track['item']['id'] != prev_id),
             )
-            prev_id = curr_track['item']['album']['id']
+            '''
             iter += 1
-            print(iter)
         else:
+            prev_id = 0
             inactive_count += 1
             print('empty')
         time.sleep(BUFFER)
