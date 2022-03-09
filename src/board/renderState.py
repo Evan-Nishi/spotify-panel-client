@@ -43,7 +43,7 @@ class RenderState:
         self.tf = title_font
         self.blank = True
         
-    def drawText(self, x_pos, y_pos, color, text, font):
+    def draw_text(self, x_pos, y_pos, color, text, font):
         '''
         draws text of board
         
@@ -56,6 +56,8 @@ class RenderState:
         '''
         t_color = graphics.Color(color[0],color[1],color[2])
         graphics.DrawText(self.canvas, font, x_pos, y_pos, t_color, text)
+        return 0
+    def draw_image(self):
         return 0
 
     def render(self):

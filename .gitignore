@@ -1,5 +1,5 @@
 .env
-assets/*
+*.txt
 *.jpg
 __pycache__/
 test.py
