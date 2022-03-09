@@ -8,12 +8,13 @@ import shutil
 #All file side stuff here
 
 def fetch_img(file_name, url):
-    #Fetches image from URL
+    '''
+    Fetches image from URL
 
-    #Params:
-    #   file_name(str): name of file WITH FILE HEADER
-    #   url(str): url to fetch image from
-
+    Args:
+       file_name(str): name of file WITH FILE HEADER
+       url(str): url to fetch image from
+    '''
     req = requests.get(url, stream=True)
     if req.status_code == 200:
         try:
@@ -26,16 +27,17 @@ def fetch_img(file_name, url):
         
         return 0
 def resize(file_name, h = 32, w = 32):
-    #Resizes and replaces image to hxw.  Note file name will have hxw at end after completion.  Defaults to 32x32
+    '''
+    Resizes and replaces image to hxw.  Note file name will have hxw at end after completion.  Defaults to 32x32
     
-    #Returns:
-    #   string: new file name
+    Returns:
+       string: new file name
 
-    #Params:
-    #   file_name(str): name of file WITH FILE HEADER
-    #   h(int): height in pixels of resize
-    #   w(int): width in pixels of resize
-
+    Params:
+       file_name(str): name of file WITH FILE HEADER
+       h(int): height in pixels of resize
+       w(int): width in pixels of resize
+    '''
     #IDs as of now don't have periods but may need to change later
     f_split = file_name.split('.')
 

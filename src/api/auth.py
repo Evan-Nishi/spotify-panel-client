@@ -2,16 +2,17 @@ from base64 import b64encode
 import requests
 
 def get_access_token(ref_token, client_id, client_secret):
-    #Returns access token as string 
+    '''
+    Returns access token as string 
 
-    #Params:
-    #   ref_token(str): refresh token in dotenv
-    #   client_id(str): client id of app
-    #   client_secret(str): client secret of app
+    Params:
+       ref_token(str): refresh token in dotenv
+       client_id(str): client id of app
+       client_secret(str): client secret of app
 
-    #Returns:
-    #    string: new refresh token or error code 
-    
+    Returns:
+        string: new refresh token or error code 
+    '''
     print('Fetching access tokens')
 
     #api requires b64 encoded str <id:secret> format

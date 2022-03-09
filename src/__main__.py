@@ -4,7 +4,6 @@ import os
 import time
 
 import utils.image_helper as img_h
-import utils.config as config
 import board.renderState as r
 import api.auth as auth
 import api.dao as dao
@@ -30,7 +29,6 @@ def run():
 
     iter = 0
     inactive_count = 0
-    update = False
 
     access_token = auth.get_access_token(TOKEN, ID, SECRET)
    
@@ -40,6 +38,12 @@ def run():
 
     board_state = r.RenderState()
 
+    #NOTE this thread should not modify board_state under ANY circumstances
+    
+    #render_thread = threading.Thread(target=board_state.render)
+    #render_thread.start()
+    
+    
     #should probably make ErrorHandler class but I lazy
     while (TIMEOUT - iter != 0 and INACTIVE_TIMEOUT - inactive_count != 0):
         req = dao.curr_track(access_token)
@@ -50,7 +54,7 @@ def run():
         
         if(time.time() >= expire):
             access_token = auth.get_access_token(TOKEN, ID, SECRET)
-            expire += 3590
+            expire = time.time() + 3590
         try:
             status = curr_track['error']['status']
             if(status == 401):
@@ -66,10 +70,11 @@ def run():
 
         #TODO refactor, this is horrendous and I shouldn't be a programmer
         if(req != 204):
+            board_state.blank = False
             inactive_count = 0
             album_id = curr_track['item']['album']['id']
 
-            #gets smallest resolution image and fetches it
+            #gets smallest resolution (64x64) image and fetches it
             img_h.fetch_img(album_id + '.jpg', curr_track['item']['album']['images'][-1]['url'])
             f_name = img_h.resize(album_id + '.jpg')
 
@@ -79,19 +84,10 @@ def run():
             for a in curr_track['item']['album']['artists']:
                 artist_string += a['name'] + ', '
             artist_string = artist_string[0:-2]
-            '''
-            board.render.render(
-                artists = artist_string,
-                title = curr_track['item']['name'],
-                progress = curr_track['progress_ms']/curr_track['item']['duration_ms'],
-                file_name = f_name,
-            )
-            '''
             iter += 1
         else:
-            prev_id = 0
+            board_state.blank = True
             inactive_count += 1
-            print('empty')
         time.sleep(BUFFER)
     return 0
         
