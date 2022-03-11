@@ -1,4 +1,3 @@
-import re
 from PIL import Image
 
 import os
@@ -38,6 +37,8 @@ def resize(file_name, h = 32, w = 32):
        h(int): height in pixels of resize
        w(int): width in pixels of resize
     '''
+
+    #IDIOT YOU COULDA JUST USED image.thumbnail
     #IDs as of now don't have periods but may need to change later
     f_split = file_name.split('.')
 

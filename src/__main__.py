@@ -4,7 +4,7 @@ import os
 import time
 
 import utils.image_helper as img_h
-import board.renderState as r
+#import board.renderState as r
 import api.auth as auth
 import api.dao as dao
 from dotenv import load_dotenv, find_dotenv
@@ -36,7 +36,7 @@ def run():
     #TODO get expire time from api instead of hard coded val even though it is constant
     expire = time.time() + 3590
 
-    board_state = r.RenderState()
+    #board_state = r.RenderState()
 
     #NOTE this thread should not modify board_state under ANY circumstances
     
@@ -70,7 +70,7 @@ def run():
 
         #TODO refactor, this is horrendous and I shouldn't be a programmer
         if(req != 204):
-            board_state.blank = False
+            #board_state.blank = False
             inactive_count = 0
             album_id = curr_track['item']['album']['id']
 
@@ -84,11 +84,18 @@ def run():
             for a in curr_track['item']['album']['artists']:
                 artist_string += a['name'] + ', '
             artist_string = artist_string[0:-2]
+            
+            print(round(curr_track['progress_ms']/curr_track['item']['duration_ms'] * 100))
+            #board_state.artists = artist_string
+            #board_state.title = curr_track['item']['album']['name']
+            #board_state.file_name = f_name
             iter += 1
         else:
-            board_state.blank = True
+            #board_state.blank = True
             inactive_count += 1
         time.sleep(BUFFER)
+
+    #board_state.thread_stop = True
     return 0
         
 

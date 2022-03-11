@@ -1,6 +1,7 @@
 .env
 *.txt
 *.jpg
-__pycache__/
+__pycache__/*
+*.pyc
 test.py
 example.json
