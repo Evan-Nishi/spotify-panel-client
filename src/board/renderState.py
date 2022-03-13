@@ -21,7 +21,7 @@ class RenderState:
         options = RGBMatrixOptions()
         options.rows = 32
         options.cols = 64
-        options.brightness = 60
+        options.brightness = 75
         options.parallel = 1
         options.chain_length = 1
         options.hardware_mapping = 'adafruit-hat-pwm'
@@ -53,14 +53,8 @@ class RenderState:
         '''
         draws progress bar
         '''
-        '''
-        red = graphics.Color(255, 0, 0)
-        graphics.DrawLine(canvas, 5, 5, 22, 13, red)
 
-        green = graphics.Color(0, 255, 0)
-        graphics.DrawCircle(canvas, 15, 15, 10, green)
-        '''
-        #this needs some explanation and to stop using hard coded vals
+        #this needs some documentation and to stop using hard coded vals
         graphics.DrawLine(self.canvas, 36, 8, (36 + self.prog * 24), 8, self.bar_color)
         graphics.DrawLine(self.canvas, 36, 9, (36 + self.prog * 24), 9, self.bar_color)
         if(self.prog * 24 < 24):
@@ -86,7 +80,8 @@ class RenderState:
         img = Image.open(self.file_name)
         self.matrix.SetImage(img.convert('RGB'))
         return 0
-    
+    def static_render(self):
+        self.matrix.SwapOnVSync(self.canvas)
     #TODO switch off hardcoded values
     def render(self):
         '''
@@ -98,14 +93,21 @@ class RenderState:
             if(self.blank):
                 self.canvas.Clear()
             else:
+                #TODO: have y pos change based on font size
                 title_len = graphics.DrawText(self.canvas, self.tf, title_x, 10, self.title)
-                artist_len = graphics.DrawText(self.canvas, self.sf, artist_x, 20, self.artists)
+                #both title/artist going at same speed is kinda ugly tbh
+                artist_len = graphics.DrawText(self.canvas, self.sf, artist_x, 20, '-' + self.artists)
                 
                 if(title_len >= 28):
                     title_x += 1
+                else:
+                    title_x == 30
 
                 if(artist_len >= 28):
-                    title_x += 1
+                    artist_x += 1
+                else:
+                    artist_x == 30
+
                 self.draw_image()
                 self.draw_prog_bar()
 
