@@ -4,7 +4,7 @@ import json
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 
 class RenderState:
-    def __init__(self, title = '', artists = '', file_name = '', progress = '0', title_font = '5x7', sub_font = '4x6', blank = True):
+    def __init__(self, title = '', artists = '', file_name = '', progress = '0', t_font = '5x7', s_font = '4x6', blank = True):
         '''
         Class object that represents the board 
 
@@ -28,11 +28,9 @@ class RenderState:
 
         matrix = RGBMatrix(options = options)
         
-        title_font = graphics.Font()
-        title_font.LoadFont('../fonts/{}.bdf'.format(title_font))
+        self.title_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(t_font))
 
-        sub_font = graphics.Font()
-        sub_font.LoadFont('../fonts/{}.bdf'.format(sub_font))
+        self.sub_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(s_font))
 
         self.title = title
         self.artists = artists
