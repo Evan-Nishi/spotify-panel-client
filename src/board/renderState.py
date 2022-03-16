@@ -19,24 +19,34 @@ class RenderState:
         '''
         #TODO convert options to either work from dotenv or with command line args or from config.json
         options = RGBMatrixOptions()
+
         options.rows = 32
         options.cols = 64
-        options.brightness = 75
+        options.brightness = 60
         options.parallel = 1
         options.chain_length = 1
         options.hardware_mapping = 'adafruit-hat-pwm'
-
+        options.row_address_type = 0
+        options.pwm_bits = 11
+        options.mutliplexing = 0
+        options.pwm_lsb_nanoseconds = 130
+        options.led_rgb_sequence = "RGB"
+        options.pixel_mapper_config = ""
+        options.panel_type = ""
+        
         matrix = RGBMatrix(options = options)
         
-        self.title_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(t_font))
-        self.sub_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(s_font))
+        self.title_font = graphics.Font()
+        self.title_font.LoadFont('../../fonts/{}.bdf'.format(t_font))
+        self.sub_font = graphics.Font()
+        self.sub_font.LoadFont('../../fonts/{}.bdf'.format(s_font))
 
         self.title = title
         self.artists = artists
         self.f_name = file_name
         self.prog = progress
         self.matrix = matrix
-        self.canvas = self.matrix.CreateFrameCanvas()
+        self.canvas = matrix.CreateFrameCanvas()
         self.blank = True
         self.thread_stop = False
 
