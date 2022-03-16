@@ -14,7 +14,8 @@ def run():
     load_dotenv(find_dotenv())
 
     #TODO: this delay system is horrendous as it will give different delays based
-    # on hardware performance between cycles instead of a fixed time given by TIMEOUT
+    #on hardware performance between cycles instead of a fixed time given by TIMEOUT
+    #TODO: switch buffer, timeout, and inactive_timeout to config.json instead of dotenv
 
     #buffer delay between cycles in seconds, for rate limit purposes have it greater than 0.3s
     BUFFER = float(os.environ.get('CYCLE_BUFFER'))

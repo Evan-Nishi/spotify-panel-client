@@ -27,7 +27,8 @@ def fetch_img(file_name, url):
         return 0
 def resize(file_name, h = 32, w = 32):
     '''
-    Resizes and replaces image to hxw.  Note file name will have hxw at end after completion.  Defaults to 32x32
+    Resizes and replaces image to hxw.  Defaults to 32x32
+    Note file name will be {file_name}32x32.{file header}
     
     Returns:
        string: new file name
@@ -39,6 +40,7 @@ def resize(file_name, h = 32, w = 32):
     '''
 
     #IDIOT YOU COULDA JUST USED image.thumbnail
+    
     #IDs as of now don't have periods but may need to change later
     f_split = file_name.split('.')
 

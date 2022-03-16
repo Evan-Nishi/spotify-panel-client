@@ -1,6 +1,6 @@
 from PIL import Image
-from matplotlib.pyplot import title
 import time
+import json
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 
 class RenderState:
@@ -17,7 +17,7 @@ class RenderState:
             sub_font(string): {height}x{width} string of font of sub header that corresponds to a .bdf file in /assets
             blank(bool): if request returns 204, song is not playing and board will be blank
         '''
-        #TODO convert options to either work from dotenv or with command line args
+        #TODO convert options to either work from dotenv or with command line args or from config.json
         options = RGBMatrixOptions()
         options.rows = 32
         options.cols = 64
@@ -28,11 +28,11 @@ class RenderState:
 
         matrix = RGBMatrix(options = options)
         
-        title_font = graphics.Font('../fonts/{}.bdf'.format(title_font))
-        title_font.LoadFont()
+        title_font = graphics.Font()
+        title_font.LoadFont('../fonts/{}.bdf'.format(title_font))
 
-        sub_font = graphics.Font('../fonts/{}.bdf'.format(sub_font))
-        sub_font.LoadFont()
+        sub_font = graphics.Font()
+        sub_font.LoadFont('../fonts/{}.bdf'.format(sub_font))
 
         self.title = title
         self.artists = artists

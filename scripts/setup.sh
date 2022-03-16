@@ -1,11 +1,14 @@
 #NOTE: RUN THIS IN ROOT OF THE PROJECT
 
-#this is meant for raspbery pi os lite
+#this is meant for raspberry pi os lite
 
 #almost a copy of: https://github.com/riffnshred/nhl-led-scoreboard/blob/master/scripts/install.sh
 
 sudo apt-get update
 sudo apt install git python3-pip
+
+sudo apt-get install libopenjp2-7
+sudo pip3 install pillow
 
 git submodule init
 git submodule update

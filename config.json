@@ -1,0 +1,12 @@
+{
+    "hardware_mapping":"adafruit-hat-pwm",
+    "rows": 32,
+    "cols": 64,
+    "parallel": 1,
+    "chain_length": 1,
+    "brightness":75,
+    "timeout": 8000,
+    "inactive_timeout": 4000,
+    "cycle_buffer": 0.8,
+    "cache_cover_art": true
+}
