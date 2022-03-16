@@ -13,8 +13,8 @@ class RenderState:
             artists(string): comma seperated string of artist(s)
             file_name(string): name of file WITH HEADER
             progress(int): progress (progress_ms/duration_ms) * 100 rounded 
-            title_font(string): {height}x{width} string of font of title that corresponds to a .bdf file in /assets
-            sub_font(string): {height}x{width} string of font of sub header that corresponds to a .bdf file in /assets
+            t_font(string): {height}x{width} string of font of title that corresponds to a .bdf file in /assets
+            s_font(string): {height}x{width} string of font of sub header that corresponds to a .bdf file in /assets
             blank(bool): if request returns 204, song is not playing and board will be blank
         '''
         #TODO convert options to either work from dotenv or with command line args or from config.json
@@ -29,7 +29,6 @@ class RenderState:
         matrix = RGBMatrix(options = options)
         
         self.title_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(t_font))
-
         self.sub_font = graphics.Font().LoadFont('../fonts/{}.bdf'.format(s_font))
 
         self.title = title
@@ -38,8 +37,6 @@ class RenderState:
         self.prog = progress
         self.matrix = matrix
         self.canvas = self.matrix.CreateFrameCanvas()
-        self.sf = sub_font
-        self.tf = title_font
         self.blank = True
         self.thread_stop = False
 
