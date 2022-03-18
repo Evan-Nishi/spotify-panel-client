@@ -1,6 +1,5 @@
 from PIL import Image
 import time
-import json
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 
 class RenderState:
@@ -12,7 +11,7 @@ class RenderState:
             title(string): title of album cover
             artists(string): comma seperated string of artist(s)
             file_name(string): name of file WITH HEADER
-            progress(int): progress (progress_ms/duration_ms) * 100 rounded 
+            progress(int): progress (progress_ms/duration_ms) * 100 rounded (percent of song completion)
             t_font(string): {height}x{width} string of font of title that corresponds to a .bdf file in /assets
             s_font(string): {height}x{width} string of font of sub header that corresponds to a .bdf file in /assets
             blank(bool): if request returns 204, song is not playing and board will be blank
@@ -22,13 +21,13 @@ class RenderState:
 
         options.rows = 32
         options.cols = 64
-        options.brightness = 60
+        options.brightness = 100
         options.parallel = 1
         options.chain_length = 1
         options.hardware_mapping = 'adafruit-hat-pwm'
         options.row_address_type = 0
         options.pwm_bits = 11
-        options.mutliplexing = 0
+        options.multiplexing = 0
         options.pwm_lsb_nanoseconds = 130
         options.led_rgb_sequence = "RGB"
         options.pixel_mapper_config = ""
@@ -38,6 +37,7 @@ class RenderState:
         
         self.title_font = graphics.Font()
         self.title_font.LoadFont('../../fonts/{}.bdf'.format(t_font))
+        
         self.sub_font = graphics.Font()
         self.sub_font.LoadFont('../../fonts/{}.bdf'.format(s_font))
 
@@ -54,17 +54,20 @@ class RenderState:
         self.bar_bg = graphics.Color(130, 130, 130)
         self.white = graphics.Color(255, 255, 255)
 
+    def get_bar_pos(self):
+        return round(36 + self.prog * 24)
+
     def draw_prog_bar (self):
         '''
         draws progress bar
         '''
-
+        bar_loc = self.get_bar_pos()
         #this needs some documentation and to stop using hard coded vals
-        graphics.DrawLine(self.canvas, 36, 8, (36 + self.prog * 24), 8, self.bar_color)
-        graphics.DrawLine(self.canvas, 36, 9, (36 + self.prog * 24), 9, self.bar_color)
+        graphics.DrawLine(self.canvas, 36, 8, bar_loc, 8, self.bar_color)
+        graphics.DrawLine(self.canvas, 36, 9, bar_loc, 9, self.bar_color)
         if(self.prog * 24 < 24):
-            graphics.DrawLine(self.canvas, (36 + self.prog * 24), 8, 60, 8, self.bar_bg)
-            graphics.DrawLine(self.canvas, (36 + self.prog * 24), 9, 60, 9, self.bar_bg)
+            graphics.DrawLine(self.canvas, bar_loc, 8, 60, 8, self.bar_bg)
+            graphics.DrawLine(self.canvas, bar_loc, 9, 60, 9, self.bar_bg)
         return 0
         
     def draw_text(self, x_pos, y_pos, color, text, font):
@@ -85,8 +88,11 @@ class RenderState:
         img = Image.open(self.file_name)
         self.matrix.SetImage(img.convert('RGB'))
         return 0
+
     def static_render(self):
         self.matrix.SwapOnVSync(self.canvas)
+        return 0
+
     #TODO switch off hardcoded values
     def render(self):
         '''
@@ -95,12 +101,15 @@ class RenderState:
         title_x = 30
         artist_x = 30
         while(self.thread_stop != True):
+            self.canvas.Clear()
             if(self.blank):
-                self.canvas.Clear()
+                pass
             else:
                 #TODO: have y pos change based on font size
                 title_len = graphics.DrawText(self.canvas, self.tf, title_x, 10, self.title)
                 #both title/artist going at same speed is kinda ugly tbh
+
+                #TODO: stagger title and author with second thread
                 artist_len = graphics.DrawText(self.canvas, self.sf, artist_x, 20, '-' + self.artists)
                 
                 if(title_len >= 28):
