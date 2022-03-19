@@ -78,7 +78,7 @@ def run():
             #gets smallest resolution (64x64) image and fetches it
             img_h.fetch_img(album_id + '.jpg', curr_track['item']['album']['images'][-1]['url'])
             f_name = img_h.resize(album_id + '.jpg')
-
+            
             artist_string = ''
 
             #if multiple authors, get all and comma seperate
@@ -89,7 +89,7 @@ def run():
             print(round(curr_track['progress_ms']/curr_track['item']['duration_ms'] * 100))
             #board_state.artists = artist_string
             #board_state.title = curr_track['item']['album']['name']
-            #board_state.file_name = f_name
+            #board_state.set_file(f_name)
             iter += 1
         else:
             #board_state.blank = True

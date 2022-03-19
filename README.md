@@ -39,7 +39,7 @@ Clone the repo
 
 Run /scripts/setup.py from root of project
 
-If that fails manually install cython, install the submodule, and build the package and install other dependencies with `sudo apt-get install libopenjp2-7` and `sudo pip3 install pillow` (libopenjp2-7 does not come default with rasbpian lite)
+If that fails manually install cython, install the submodule, and build the package and install other dependencies with `sudo apt-get install libopenjp2-7`, `pip install python-dotenv` and `sudo pip3 install pillow` (libopenjp2-7 does not come default with rasbpian lite)
 
 Create a dotenv file named .env with the same structure as example.env
 * REF_TOKEN can be gotten by calling the spotify api request and granting permission
