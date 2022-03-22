@@ -4,7 +4,7 @@ import os
 import time
 
 import utils.image_helper as img_h
-#import board.renderState as r
+import board.renderState as r
 import api.auth as auth
 import api.dao as dao
 from dotenv import load_dotenv, find_dotenv
@@ -30,20 +30,19 @@ def run():
 
     iter = 0
     inactive_count = 0
-
+    prev_id = None
     access_token = auth.get_access_token(TOKEN, ID, SECRET)
    
     #time until token expires w 10 sec buffer
     #TODO get expire time from api instead of hard coded val even though it is constant
     expire = time.time() + 3590
 
-    #board_state = r.RenderState()
+    board_state = r.RenderState()
 
     #NOTE this thread should not modify board_state under ANY circumstances
     
-    #render_thread = threading.Thread(target=board_state.render)
-    #render_thread.start()
-    
+    render_thread = threading.Thread(target=board_state.render)
+    render_thread.start()
     
     #should probably make ErrorHandler class but I lazy
     while (TIMEOUT - iter != 0 and INACTIVE_TIMEOUT - inactive_count != 0):
@@ -71,7 +70,7 @@ def run():
 
         #TODO refactor, this is horrendous and I shouldn't be a programmer
         if(req != 204):
-            #board_state.blank = False
+            board_state.blank = False
             inactive_count = 0
             album_id = curr_track['item']['album']['id']
 
@@ -86,17 +85,20 @@ def run():
                 artist_string += a['name'] + ', '
             artist_string = artist_string[0:-2]
             
-            print(round(curr_track['progress_ms']/curr_track['item']['duration_ms'] * 100))
-            #board_state.artists = artist_string
-            #board_state.title = curr_track['item']['album']['name']
-            #board_state.set_file(f_name)
+            board_state.artists = artist_string
+            if(prev_id != album_id):
+                board_state.set_file(f_name)
+            board_state.title = curr_track['item']['name']
+            board_state.prog = (round(curr_track['progress_ms'] / curr_track['item']['duration_ms'] * 100))
+            print(board_state.prog)
             iter += 1
         else:
-            #board_state.blank = True
+            prev_id = None
+            board_state.blank = True
             inactive_count += 1
         time.sleep(BUFFER)
 
-    #board_state.thread_stop = True
+    board_state.thread_stop = True
     return 0
         
 

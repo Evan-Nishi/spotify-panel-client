@@ -3,7 +3,7 @@ import time
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 
 class RenderState:
-    def __init__(self, title = '', artists = '', file_name = '', progress = '0', t_font = '5x7', s_font = '4x6', blank = True):
+    def __init__(self, title = '', artists = '', file_name = '', progress = 0, t_font = '5x7', s_font = '4x6', blank = True):
         '''
         Class object that represents the board 
 
@@ -21,7 +21,7 @@ class RenderState:
 
         options.rows = 32
         options.cols = 64
-        options.brightness = 100
+        options.brightness = 90
         options.parallel = 1
         options.chain_length = 1
         options.hardware_mapping = 'adafruit-hat-pwm'
@@ -32,9 +32,9 @@ class RenderState:
         options.led_rgb_sequence = 'RGB'
         options.pixel_mapper_config = ''
         options.panel_type = ''
-        
-        matrix = RGBMatrix(options = options)
-        
+        options.drop_privileges = False
+        options.gpio_slowdown = 1
+
         self.title_font = graphics.Font()
         self.title_font.LoadFont('../fonts/{}.bdf'.format(t_font))
         
@@ -45,34 +45,35 @@ class RenderState:
         self.artists = artists
         self.f_name = file_name
         self.prog = progress
-        self.matrix = matrix
-        self.canvas = matrix.CreateFrameCanvas()
+        self.matrix = RGBMatrix(options = options)
+        self.canvas = self.matrix.CreateFrameCanvas()
         self.blank = True
         self.thread_stop = False
-        self.img_obj
+        self.img_obj = None
 
         self.bar_color = graphics.Color(30, 220, 80)
         self.bar_bg = graphics.Color(130, 130, 130)
 
-        self.t_color = graphics.Color()
-        self.s_color = graphics.Color()
-    
+        self.t_color = graphics.Color(222, 222, 222)
+        self.s_color = graphics.Color(190, 190, 190)
+
     def set_file(self, new_f_name):
         self.f_name = new_f_name
-        self.img_obj = Image.open('../assets/{}'.format(self.f_name))
+        self.img_obj = Image.open('../assets/{}'.format(self.f_name)).convert('RGB')
         return 0
 
     def draw_prog_bar (self):
         '''
         draws progress bar
         '''
-        bar_loc = round(36 + self.prog * 0.24)
+        
+        bar_loc = round(36 + int(self.prog) * 0.24)
         #this needs some documentation and to stop using hard coded vals
-        graphics.DrawLine(self.canvas, 36, 8, bar_loc, 8, self.bar_color)
-        graphics.DrawLine(self.canvas, 36, 9, bar_loc, 9, self.bar_color)
+        graphics.DrawLine(self.canvas, 36, 28, bar_loc, 28, self.bar_color)
+        graphics.DrawLine(self.canvas, 36, 29, bar_loc, 29, self.bar_color)
         if(self.prog * 0.24 < 24):
-            graphics.DrawLine(self.canvas, bar_loc + 1, 8, 60, 8, self.bar_bg)
-            graphics.DrawLine(self.canvas, bar_loc + 1, 9, 60, 9, self.bar_bg)
+            graphics.DrawLine(self.canvas, bar_loc + 1, 28, 60, 28, self.bar_bg)
+            graphics.DrawLine(self.canvas, bar_loc + 1, 29, 60, 29, self.bar_bg)
         return 0
 
             
@@ -82,43 +83,49 @@ class RenderState:
         '''
         renders board on vertical sync
         '''
-        title_x = 36
-        artist_x = 36
+        time.sleep(3)
+        title_x = 34
+        artist_x = 34
         while(self.thread_stop != True):
-            if(self.blank):
+            if(self.blank or self.img_obj == None):
                 pass
             else:
                 #TODO: have y pos change based on font size
-                title_len = graphics.DrawText(self.canvas, self.tf, title_x, 10, self.title)
+                title_len = graphics.DrawText(self.canvas, self.title_font, title_x, 10, self.t_color, self.title)
                 #both title/artist going at same speed is kinda ugly tbh
 
                 #TODO: stagger title and author with second thread
-                artist_len = graphics.DrawText(self.canvas, self.sf, artist_x, 20, '-' + self.artists)
+                artist_len = graphics.DrawText(self.canvas, self.sub_font, artist_x, 20, self.s_color , '-' + self.artists)
                 
-                if(title_len > 28):
+                if(title_len > 32):
                     title_x -= 1
                 else:
-                    title_x = 36
+                    title_x = 34
 
-                if(artist_len > 28):
+                if(artist_len > 32):
                     artist_x -= 1
                 else:
-                    artist_x = 36
+                    artist_x = 34
 
-                if(title_x + title_len < 0):
-                    title_x = 36
-                
-                if(artist_x + artist_len < 0):
-                    artist_x = 36
-                
+                if(title_x + title_len < 18):
+                    title_x = 34
+                    artist_x = 34
+
+                if(artist_x + artist_len < 18):
+                     title_x = 34
+                     artist_x = 34
+
                 #only way to get stop effect for text
                 #will sleep rest of render 
-                if(title_x == 34 or artist_x == 34):
-                    time.sleep(1.5)
+                if(title_x == 32):
+                    time.sleep(2)
 
-
+                
                 self.draw_prog_bar()
-                self.matrix.SwapOnVSync(self.canvas)
-                self.matrix.SetImage(self.img_obj)
+                self.canvas.SetImage(self.img_obj, unsafe=False)
+                self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+                time.sleep(0.01)
+                self.canvas.Clear()
                 
         return 0
