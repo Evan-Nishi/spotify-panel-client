@@ -81,7 +81,7 @@ def run():
             artist_string = ''
 
             #if multiple authors, get all and comma seperate
-            for a in curr_track['item']['album']['artists']:
+            for a in curr_track['item']['artists']:
                 artist_string += a['name'] + ', '
             artist_string = artist_string[0:-2]
             
