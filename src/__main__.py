@@ -107,5 +107,6 @@ if __name__ == '__main__':
     try:
         run()
     except KeyboardInterrupt:
+        board_state.thread_stop = True
         print('Exiting')
         sys.exit(0)
