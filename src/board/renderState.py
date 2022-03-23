@@ -58,20 +58,26 @@ class RenderState:
         self.s_color = graphics.Color(190, 190, 190)
 
     def set_file(self, new_f_name):
+        '''
+        stores file object in class 
+
+        Attr:
+            new_f_name(str): new name of file
+        '''
         self.f_name = new_f_name
         self.img_obj = Image.open('../assets/{}'.format(self.f_name)).convert('RGB')
         return 0
 
     def draw_prog_bar (self):
         '''
-        draws progress bar
+        draws progress bar to self.canvas
         '''
         
         bar_loc = round(36 + int(self.prog) * 0.24)
         #this needs some documentation and to stop using hard coded vals
         graphics.DrawLine(self.canvas, 36, 28, bar_loc, 28, self.bar_color)
         graphics.DrawLine(self.canvas, 36, 29, bar_loc, 29, self.bar_color)
-        if(self.prog * 0.24 < 24):
+        if(self.prog * 0.24 <= 24):
             graphics.DrawLine(self.canvas, bar_loc + 1, 28, 60, 28, self.bar_bg)
             graphics.DrawLine(self.canvas, bar_loc + 1, 29, 60, 29, self.bar_bg)
         return 0
@@ -88,7 +94,7 @@ class RenderState:
         artist_x = 34
         while(self.thread_stop != True):
             if(self.blank or self.img_obj == None):
-                pass
+                self.matrix.Clear()
             else:
                 #TODO: have y pos change based on font size
                 title_len = graphics.DrawText(self.canvas, self.title_font, title_x, 10, self.t_color, self.title)

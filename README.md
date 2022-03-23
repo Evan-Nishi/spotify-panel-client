@@ -2,6 +2,8 @@
 
 > Note this is a very brief guide and not at all exhaustive, feel free to contribute to the wiki
 
+[Demo](https://www.youtube.com/watch?v=wAP2LzeGaik)
+
 ## Parts List
 - [Adafruit Bonnet](https://www.adafruit.com/product/3211) or [HAT](https://www.adafruit.com/product/2345)
 - [64x32 LED panel](https://www.adafruit.com/product/2278)

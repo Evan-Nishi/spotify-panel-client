@@ -62,5 +62,3 @@ def check_cover(file_name):
         return True
     else:
         return False
-
-
